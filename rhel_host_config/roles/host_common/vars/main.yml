@@ -1,2 +1,2 @@
-password: Y3llow1970
-password_hash: "{{ password | password_hash(salt='sRvXWmR5BBwqRlih') }}"
+# password: Y3llow1970
+# password_hash: "{{ password | password_hash(salt='sRvXWmR5BBwqRlih') }}"

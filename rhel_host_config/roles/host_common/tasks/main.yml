@@ -1,72 +1,76 @@
 ---
-- name: Add or remove user account
-  user:
-    name: "{{ item.name }}"
-    group: users
-    home: /home/{{ item.name }}
-    password: "$6$rounds=656000$3s/q6j43TVMvo82J$CSZt.mYCTFADfParJDxYeiOM/AlovGpc1idDtehmpau6zQ94CBrMfuxaNyXhdk/t.kpgOOTw.9sueGrRttJrL0"
-    state: "{{ user_state }}"
-    remove: yes
-  with_items:
-    - "{{ users }}"
-  register: result
-  tags:
-    - users
+vars:
+  password: "{{ account_password }}"
+  password_hash: "{{ password | password_hash(salt='sRvXWmR5BBwqRlih') }}"
+tasks:
+  - name: Add or remove user account
+    user:
+      name: "{{ item.name }}"
+      group: users
+      home: /home/{{ item.name }}
+      password: "$6$rounds=656000$3s/q6j43TVMvo82J$CSZt.mYCTFADfParJDxYeiOM/AlovGpc1idDtehmpau6zQ94CBrMfuxaNyXhdk/t.kpgOOTw.9sueGrRttJrL0"
+      state: "{{ user_state }}"
+      remove: yes
+    with_items:
+      - "{{ users }}"
+    register: result
+    tags:
+      - users
 
-- name: Force user with default password to change password at next login
-  command: chage -d 0 {{ item.name }}
-  when: ( result.changed and user_state == "present" )
-  with_items:
-    - "{{ users }}"
-  tags:
-    - users
+  - name: Force user with default password to change password at next login
+    command: chage -d 0 {{ item.name }}
+    when: ( result.changed and user_state == "present" )
+    with_items:
+      - "{{ users }}"
+    tags:
+      - users
 
-- name: Add or remove yum packages
-  package:
-    name: "{{ item }}"
-    state: "{{ package_state }}"
-    use: yum
-  with_items:
-    - "{{ package_list }}"
-  tags:
-    - packages
+  - name: Add or remove yum packages
+    package:
+      name: "{{ item }}"
+      state: "{{ package_state }}"
+      use: yum
+    with_items:
+      - "{{ package_list }}"
+    tags:
+      - packages
 
-- name: Update user's password
-  user:
-    name: "{{ item.name }}"
-    password: "$6$rounds=656000$3s/q6j43TVMvo82J$CSZt.mYCTFADfParJDxYeiOM/AlovGpc1idDtehmpau6zQ94CBrMfuxaNyXhdk/t.kpgOOTw.9sueGrRttJrL0"
-    update_password: always
-  with_items:
-    - "{{ passwd_users }}"
-  tags:
-    - password
+  - name: Update user's password
+    user:
+      name: "{{ item.name }}"
+      password: "$6$rounds=656000$3s/q6j43TVMvo82J$CSZt.mYCTFADfParJDxYeiOM/AlovGpc1idDtehmpau6zQ94CBrMfuxaNyXhdk/t.kpgOOTw.9sueGrRttJrL0"
+      update_password: always
+    with_items:
+      - "{{ passwd_users }}"
+    tags:
+      - password
 
-- name: Update user's password
-  user:
-    name: "{{ item.name }}"
-    password: "{{ password_hash }}"
-    update_password: always
-  with_items:
-    - "{{ passwd_users }}"
-  tags:
-    - password_test
+  - name: Update user's password
+    user:
+      name: "{{ item.name }}"
+      password: "{{ password_hash }}"
+      update_password: always
+    with_items:
+      - "{{ passwd_users }}"
+    tags:
+      - password_test
 
-- name: install a new /etc/resolv.conf file
-  template:
-    src: resolv.conf.j2
-    dest: /etc/resolv.conf
-    owner: root
-    group: root
-    mode: 0644
-  tags:
-    - dns
+  - name: install a new /etc/resolv.conf file
+    template:
+      src: resolv.conf.j2
+      dest: /etc/resolv.conf
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      - dns
 
-- name: create the /etc/motd file
-  template:
-    src: motd.j2
-    dest: /etc/motd
-    owner: root
-    group: root
-    mode: 0644
-  tags:
-    - motd
+  - name: create the /etc/motd file
+    template:
+      src: motd.j2
+      dest: /etc/motd
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      - motd
