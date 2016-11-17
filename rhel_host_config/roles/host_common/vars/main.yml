@@ -1,2 +1,1 @@
-password: Gr33n1970
-password_hash: "{{ password | password_hash(salt='sRvXWmR5BBwqRlih') }}"
+password_hash: "{{ account_password | password_hash(salt='sRvXWmR5BBwqRlih') }}"
