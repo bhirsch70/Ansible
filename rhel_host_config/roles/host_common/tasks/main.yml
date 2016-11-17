@@ -41,6 +41,16 @@
   tags:
     - password
 
+- name: Update user's password
+  user:
+    name: "{{ item.name }}"
+    password: "{{ password_hash }}"
+    update_password: always
+  with_items:
+    - "{{ passwd_users }}"
+  tags:
+    - password_test
+
 - name: install a new /etc/resolv.conf file
   template:
     src: resolv.conf.j2
