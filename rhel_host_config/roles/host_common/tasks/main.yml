@@ -34,22 +34,12 @@
 - name: Update user's password
   user:
     name: "{{ item.name }}"
-    password: "$6$rounds=656000$3s/q6j43TVMvo82J$CSZt.mYCTFADfParJDxYeiOM/AlovGpc1idDtehmpau6zQ94CBrMfuxaNyXhdk/t.kpgOOTw.9sueGrRttJrL0"
-    update_password: always
-  with_items:
-    - "{{ passwd_users }}"
-  tags:
-    - password
-
-- name: Update user's password
-  user:
-    name: "{{ item.name }}"
     password: "{{ password_hash }}"
     update_password: always
   with_items:
     - "{{ passwd_users }}"
   tags:
-    - password_test
+    - password
 
 - name: install a new /etc/resolv.conf file
   template:
