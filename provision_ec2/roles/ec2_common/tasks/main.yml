@@ -6,7 +6,7 @@
     image: ami-12663b7a
     region: us-east-1
     count: "{{ ec2_instance_count | int }}"
-    group_id: vpc-2a994a4c
+    group_id: sg-12a98e6f
     vpc_subnet_id: subnet-b70447fe
     assign_public_ip: yes
     instance_tags:
